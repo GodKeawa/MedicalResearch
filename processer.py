@@ -122,11 +122,13 @@ def ocr_process():
     for item in dic:
         path = "articles/" + item["index"] + "/"
         files = os.listdir(path)
-        if len(files) == 1:
+        if len(files) == 1: # 加速用的，第一次运行可能只有text.txt
             print(item["index"] + " Passed!")
             continue
         with open(path + "text.txt", "w", encoding="utf-8") as f:
             for i in range(len(files) - 1):
+                if ("jpg" not in files[i]) and ("png" not in files[i]):
+                    continue
                 result = ocr.ocr(path + files[i], cls=True)
                 for line in result[0]:
                     f.write(line[1][0])
