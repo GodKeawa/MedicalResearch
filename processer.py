@@ -18,7 +18,7 @@ headers = {
 def get_datalist():
     datas = []
     # datastore.txt通过浏览器调试获取，直接抓取网站后端数据库传给前端的表
-    with open("datastore.txt", "r", encoding="utf-8") as f:
+    with open("datas/datastore.txt", "r", encoding="utf-8") as f:
         text = f.read()
         singlelist = re.findall(re.compile(r"""<li>.*?</li>"""), text)
         for single in singlelist:
@@ -34,12 +34,12 @@ def get_datalist():
                     "time": span[3].text,
                 }
             )
-        with open("datalist.json", "w", encoding="utf-8") as f:
+        with open("datas/datalist.json", "w", encoding="utf-8") as f:
             f.write(json.dumps(datas, ensure_ascii=False))
 
 
 def get_articles():
-    with open("datalist.json", "r", encoding="utf-8") as f:
+    with open("datas/datalist.json", "r", encoding="utf-8") as f:
         dic = json.loads(f.read())
     for item in dic:
         count = 0
@@ -117,7 +117,7 @@ def ocr_process():
 
     ocr = PaddleOCR()
 
-    with open("datalist.json", "r", encoding="utf-8") as f:
+    with open("datas/datalist.json", "r", encoding="utf-8") as f:
         dic = json.loads(f.read())
     for item in dic:
         path = "articles/" + item["index"] + "/"

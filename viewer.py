@@ -9,7 +9,7 @@ from cv2 import imread
 
 def word_cloud_gen_simple(s: str):
     if s == "all":
-        path = "overal_dict.json"
+        path = "datas/overal_dict.json"
     else:
         path = "articles/" + s + "/words_dict.json"
     with open(path, "r", encoding="utf-8") as f:
@@ -58,6 +58,9 @@ def show_img(s: str):
     current_image_index = -1
     path = "articles/" + s + "/"
     filelist = [file for file in listdir(path) if "jpg" in file or "png" in file]
+    if len(filelist) == 0:
+        sg.popup("该文章没有图片，原文就是字", font=(None, 18))
+        return
     imgs = []
     for file in filelist:
         img = imread(path + file)
@@ -89,7 +92,7 @@ def show_img(s: str):
 
 
 # 全局字典
-with open(r"full_datalist.json", "r", encoding="utf-8") as f:
+with open(r"datas/full_datalist.json", "r", encoding="utf-8") as f:
     dic = json.loads(f.read())
 searchmethods = ["查询序号", "标题", "时间", "单词", "热门词", "关键词", "全文"]
 method_dic = {

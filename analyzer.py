@@ -7,13 +7,13 @@ from collections import Counter
 ARTICLES = 748
 
 # 自定义词典
-jieba.load_userdict(r"custom_words.txt")
+jieba.load_userdict(r"datas/custom_words.txt")
 
 # 使用一个全局词典统计所有文章的词
 word_dic = dict()
 
 
-with open(r"datalist.json", "r", encoding="utf-8") as f:
+with open(r"datas/datalist.json", "r", encoding="utf-8") as f:
     dic = json.loads(f.read())
 
 def isNum(s):  # 加强版数字判断逻辑
@@ -35,7 +35,7 @@ def isNum(s):  # 加强版数字判断逻辑
 
 def article_cut():
     global word_dic
-    with open(r"stop_words.txt", "r", encoding="utf-8") as f:
+    with open(r"datas/stop_words.txt", "r", encoding="utf-8") as f:
         stop_words = f.read().splitlines()
     stop_words.append("\n")
     stop_words.append(" ")
@@ -77,17 +77,17 @@ def article_cut():
     temp = word_dic.items()
     sorted_temp = sorted(temp, key=lambda x: x[1], reverse=True)
     word_dic = {k: v for k, v in sorted_temp}
-    with open(r"overal_dict.json", "w", encoding="utf-8") as f:
+    with open(r"datas/overal_dict.json", "w", encoding="utf-8") as f:
         f.write(json.dumps(word_dic, ensure_ascii=False))
 
     # 写入完全datalist
-    with open(r"full_datalist.json", "w", encoding="utf-8") as f:
+    with open(r"datas/full_datalist.json", "w", encoding="utf-8") as f:
         f.write(json.dumps(dic, ensure_ascii=False))
 
 
 def IDF_gen():
     IDF_dic = {}
-    with open(r"overal_dict.json", "r", encoding="utf-8") as f:
+    with open(r"datas/overal_dict.json", "r", encoding="utf-8") as f:
         overal_dic = json.loads(f.read())
     # 初始置为0
     for wd, ct in overal_dic.items():
@@ -101,7 +101,7 @@ def IDF_gen():
             IDF_dic[wd] += 1
     for wd, ct in IDF_dic.items():
         IDF_dic[wd] = math.log10(ARTICLES / (ct + 1))
-    with open(r"IDF.txt", "w", encoding="utf-8") as f:
+    with open(r"datas/IDF.txt", "w", encoding="utf-8") as f:
         for wd, ct in IDF_dic.items():
             # 调整数字权重，如有需要可以打开
             if isNum(wd):
@@ -111,9 +111,9 @@ def IDF_gen():
 
 
 def theme_extract():
-    jieba.analyse.set_idf_path(r"IDF.txt")
-    jieba.analyse.set_stop_words(r"stop_words.txt")
-    with open(r"full_datalist.json", "r", encoding="utf-8") as f:
+    jieba.analyse.set_idf_path(r"datas/IDF.txt")
+    jieba.analyse.set_stop_words(r"datas/stop_words.txt")
+    with open(r"datas/full_datalist.json", "r", encoding="utf-8") as f:
         full_dic = json.loads(f.read())
     for item in full_dic:
         path = "articles/" + item["index"] + "/"
@@ -125,7 +125,7 @@ def theme_extract():
             key_dic.update({keyword[0]: keyword[1]})
         item.update({"theme": key_dic})
         print(item["index"] + " Finished!")
-    with open(r"full_datalist.json", "w", encoding="utf-8") as f:
+    with open(r"datas/full_datalist.json", "w", encoding="utf-8") as f:
         f.write(json.dumps(full_dic, ensure_ascii=False))
 
 
