@@ -2,3 +2,4 @@
 viewer.spec
 dist/
 build/
+.venv/
