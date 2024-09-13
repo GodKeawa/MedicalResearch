@@ -112,6 +112,37 @@ def exchange_name():
     os.rename(jpg, jpg_1)
 
 
+def pic_cut():
+    # 网页的图片又变成整整一张了，真是服了
+    # 切割图片到合适的大小，提高ocr准确性
+    import cv2
+    import numpy as np
+
+    with open("datas/datalist.json", "r", encoding="utf-8") as f:
+        dic = json.loads(f.read())
+    for item in dic:
+        path = "articles/" + item["index"] + "/"
+        pic_target = path + "0.jpg"
+
+        # 读取要分割的图片，以及其尺寸等数据
+        picture = cv2.imread(pic_target)
+        (width, length, depth) = picture.shape
+        cut_width = width // (width // 2000)
+        cut_length = length
+        pic = np.zeros((cut_width, cut_length, depth))
+        # 计算可以划分的横纵的个数
+        num_width = width // 2000
+        # for循环迭代生成
+        for i in range(0, num_width):
+            pic = picture[
+                i * cut_width : (i + 1) * cut_width,
+                0:cut_length,
+                :,
+            ]
+            result_path = path + "{}.jpg".format(i)
+            cv2.imwrite(result_path, pic)
+
+
 def ocr_process():
     from paddleocr import PaddleOCR
 
@@ -122,7 +153,7 @@ def ocr_process():
     for item in dic:
         path = "articles/" + item["index"] + "/"
         files = os.listdir(path)
-        if len(files) == 1: # 加速用的，第一次运行可能只有text.txt
+        if len(files) == 1:  # 加速用的，第一次运行可能只有text.txt
             print(item["index"] + " Passed!")
             continue
         with open(path + "text.txt", "w", encoding="utf-8") as f:
@@ -147,6 +178,7 @@ if __name__ == "__main__":
     # get_datalist()  # 生成datalist.json，已经生成过了
     # get_articles() # 获取文章，已经全部获取完毕
     # exchange_name() # 手动优化部分内容
+    # pic_cut() # 切割长图
     # ocr_process()  # ocr处理图片，覆写text.txt，已初步完成
 
     print("Finished!")
