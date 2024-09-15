@@ -3,3 +3,4 @@ viewer.spec
 dist/
 build/
 .venv/
+tests/
